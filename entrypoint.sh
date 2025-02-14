@@ -27,7 +27,7 @@ commits_response=$(curl -s -H "${AUTH_HEADER}" -H "${API_HEADER}" $COMMITS_URL)
 N_COMMITS=$(echo $commits_response | jq -r length)
 
 # /softfix ``` ... ```
-COMMIT_MSG=$(jq -rRs 'match("(?<!\\S)/softfix\\n```\\n(.*?)\\n```(?:\\n|\\z)"; "m").captures[0].string' <<<"$COMMENT_BODY")
+COMMIT_MSG=$(jq -rRs 'match("\\/softfix\\s*```\\s*\\n(?<msg>(.*\\n)*?)\\s*```"; "ms").captures[0].string' <<<"$COMMENT_BODY")
 
 if [[ -z "$COMMIT_MSG" ]] && [[ "$N_COMMITS" -eq 1 ]]; then
 	echo "Nothing to do here, aborting..."
