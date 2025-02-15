@@ -1,5 +1,5 @@
 # Softfix a pull request
-bla
+bla bla
 
 After installation, simply write `/softfix` to fixup all commits of the pr into the first one. This will use the commit message of the first one by default.
 
