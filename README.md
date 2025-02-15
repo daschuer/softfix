@@ -29,18 +29,40 @@ A PR should be atomic in itself, and can usually be a single commit. When you su
 Add the following lines to a file named `.github/workflows/softfix.yml` to use.
 ```
 name: Softfix workflow
-on: 
+on:
   issue_comment:
     types: [created]
+
+permissions:
+  pull-requests: write
+  contents: write
+
 jobs:
   softfix:
     name: Softfix action
-    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/softfix')
+    if: github.event.issue.pull_request != '' && startsWith(github.event.comment.body, '/softfix')
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: daschuer/softfix@v3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if commenter is maintainer
+        id: check-maintainer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const response = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.payload.comment.user.login
+            });
+
+            const isMaintianer = ['admin', 'write'].includes(response.data.permission);
+            return isMaintianer;
+      - name: Checkout repository
+        if: steps.check-maintainer.outputs.result == 'true'
+        uses: actions/checkout@v4
+      - name: Softfix
+        if: steps.check-maintainer.outputs.result == 'true'
+        uses: daschuer/softfix@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
