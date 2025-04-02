@@ -1,5 +1,10 @@
 # Softfix a pull request
-After installation, simply write `/softfix` to fixup all commits of the pr into the first one. This will use the commit message of the first one by default.
+After installation, simply write 
+```
+/softfix
+```
+This performs an `--autosquash` in case there are `fixup!` `amend!` or `squash!` commits. 
+If not, it softfixes all commits of the pr into the first one using the commit message of the first commit.
 
 If you want to edit the commit message, the action will use the text within triple quotes in direct connection with the command like so
 
@@ -61,7 +66,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Softfix
         if: steps.check-maintainer.outputs.result == 'true'
-        uses: daschuer/softfix@v3
+        uses: daschuer/softfix@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
