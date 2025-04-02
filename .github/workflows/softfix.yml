@@ -1,8 +1,9 @@
 name: Softfix workflow
+
 on:
   issue_comment:
     types: [created]
-
+    
 permissions:
   pull-requests: write
   contents: write
