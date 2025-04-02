@@ -72,12 +72,16 @@ if [[ -z "$COMMIT_MSG" ]] && jq -eRs 'test("(?<!\\S)/softfix:squash\\b")' <<<"$C
 	COMMIT_MSG=$(git log --reverse --pretty=format:"* %B" "HEAD~$N_COMMITS..HEAD" | tail -c +3)
 fi
 
-git reset --soft HEAD~$(($N_COMMITS-1))
-
-if [[ -z "$COMMIT_MSG" ]]; then
-	git commit --amend --no-edit
+if [[ -z "$COMMIT_MSG" ]] && git log --format=%B "HEAD~$N_COMMITS..HEAD" | grep -Eq "^(fixup!|amend!|squash!)"; then
+    git rebase --autosquash "HEAD~$N_COMMITS"
 else
-	git commit --amend -m "$COMMIT_MSG"
+    git reset --soft HEAD~$(($N_COMMITS-1))
+
+    if [[ -z "$COMMIT_MSG" ]]; then
+        git commit --amend --no-edit
+    else
+        git commit --amend -m "$COMMIT_MSG"
+    fi
 fi
 
 git push --force-with-lease fork $HEAD_BRANCH
