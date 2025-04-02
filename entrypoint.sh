@@ -73,7 +73,7 @@ if [[ -z "$COMMIT_MSG" ]] && jq -eRs 'test("(?<!\\S)/softfix:squash\\b")' <<<"$C
 fi
 
 if [[ -z "$COMMIT_MSG" ]] && git log --format=%B "HEAD~$N_COMMITS..HEAD" | grep -Eq "^(fixup!|amend!|squash!)"; then
-    git rebase --autosquash
+    git rebase --autosquash "HEAD~$N_COMMITS"
 else
     git reset --soft HEAD~$(($N_COMMITS-1))
 
