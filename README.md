@@ -3,7 +3,7 @@ bla bla
 
 After installation, simply write `/softfix` to fixup all commits of the pr into the first one. This will use the commit message of the first one by default.
 
-If you want to edit the commit message, the action will use the text within triple quotes in direct connection with the command like so bla bla
+If you want to edit the commit message, the action will use the text within triple quotes in direct connection with the command like so
 
 ````
 /softfix
